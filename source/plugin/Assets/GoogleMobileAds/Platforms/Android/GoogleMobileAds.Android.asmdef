@@ -3,7 +3,8 @@
     "references": [
         "GoogleMobileAds.Core",
         "GoogleMobileAds.Common",
-        "GoogleMobileAds.Api.Mediation"
+        "GoogleMobileAds.Api.Mediation",
+        "Config"
     ],
     "includePlatforms": [
         "Android",

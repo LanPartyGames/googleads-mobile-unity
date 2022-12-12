@@ -41,10 +41,23 @@ namespace GoogleMobileAds.Android
             this.initCompleteAction = initCompleteAction;
 
             AndroidJavaClass playerClass = new AndroidJavaClass(Utils.UnityActivityClassName);
-            AndroidJavaObject activity =
-                    playerClass.GetStatic<AndroidJavaObject>("currentActivity");
+            AndroidJavaObject activity = playerClass.GetStatic<AndroidJavaObject>("currentActivity");
             AndroidJavaClass mobileAdsClass = new AndroidJavaClass(Utils.MobileAdsClassName);
-            mobileAdsClass.CallStatic("initialize", activity, this);
+            
+            if (GameConfig.ENABLE_ADMOB_THREAD_FIX)
+            {
+                var androidJavaRunnable = new AndroidJavaRunnable(()=> 
+                    { 
+                        mobileAdsClass.CallStatic("initialize", activity, this);
+                    }
+                );
+                AndroidJavaClass threadHelperClass = new AndroidJavaClass("com.example.mylibrary.MyThreadHelper");
+                threadHelperClass.CallStatic("RunOnNewThread", androidJavaRunnable);
+            }
+            else
+            {
+                mobileAdsClass.CallStatic("initialize", activity, this);
+            }
         }
 
         public void SetApplicationVolume(float volume)
